@@ -1,29 +1,18 @@
 package eliu.gonzalez.mydigimind.ui.dashboard
 
-import android.content.Intent
+import android.app.TimePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.TableRow
-import android.widget.TextView
-import androidx.core.view.get
+import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
-import androidx.navigation.findNavController
-import eliu.gonzalez.mydigimind.Carrito
-import eliu.gonzalez.mydigimind.MainActivity
 import eliu.gonzalez.mydigimind.R
-import eliu.gonzalez.mydigimind.Recordatorio
+import eliu.gonzalez.mydigimind.ui.Task
 import eliu.gonzalez.mydigimind.ui.home.HomeFragment
 import kotlinx.android.synthetic.main.fragment_dashboard.view.*
-import kotlinx.android.synthetic.main.recordatorio.*
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -40,98 +29,73 @@ class DashboardFragment : Fragment() {
                 ViewModelProvider(this).get(DashboardViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
 
-        var listdays: ArrayList<String> = ArrayList<String>()
+        val btn_time: Button = root.findViewById(R.id.btnTime)
+
+        btn_time.setOnClickListener {
+            val cal= Calendar.getInstance()
+            val timeSetListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+                cal.set(Calendar.HOUR_OF_DAY,hourOfDay)
+                cal.set(Calendar.MINUTE,minute)
+                btn_time.text = SimpleDateFormat("HH:mm").format(cal.time)
+            }
+            TimePickerDialog(root.context,timeSetListener,cal.get(Calendar.HOUR_OF_DAY),
+            cal.get(Calendar.MINUTE), true).show()
+
+        }
+
+
+
+       /* var listdays: ArrayList<String> = ArrayList<String>()
         var days: String = ""
         var name: String = ""
         var time: String = ""
+        */
 
 
-        var btn: Button = root.btnSetTime as Button
-        var ch1: CheckBox = root.row1 as CheckBox
-        var ch2: CheckBox = root.row2 as CheckBox
-        var ch3: CheckBox = root.row3 as CheckBox
-        var ch4: CheckBox = root.row4 as CheckBox
-        var ch5: CheckBox = root.row5 as CheckBox
-        var ch6: CheckBox = root.row6 as CheckBox
-        var ch7: CheckBox = root.row7 as CheckBox
 
-        btn.setOnClickListener {
-            if (listdays.size != 0) {
-                name = root.textName.text.toString()
-                time = root.textTime.text.toString()
-                if (listdays.size == 7) {
-                    days = "Everyday"
-                } else {
-                    days = listdays.toString().removePrefix("[").removeSuffix("]")
-                }
-                var list: Carrito = Carrito()
-                list.agregar(Recordatorio(days, time, name))
+        val btn_save: Button = root.btnSetTime as Button
+        val et_title: EditText = root.textName as EditText
+        val chMonday: CheckBox = root.row1 as CheckBox
+        val chTuesday: CheckBox = root.row2 as CheckBox
+        val chWednesday: CheckBox = root.row3 as CheckBox
+        val chThursday: CheckBox = root.row4 as CheckBox
+        val chFriday: CheckBox = root.row5 as CheckBox
+        val chSaturday: CheckBox = root.row6 as CheckBox
+        val chSunday: CheckBox = root.row7 as CheckBox
 
-                var bundle: Bundle= Bundle()
-                bundle.putSerializable("list",list)
-                //val navController = findNavController(R.id.nav_host_fragment)
+        btn_save.setOnClickListener {
+            var title = et_title.text.toString()
+            var time = btn_time.text.toString()
+            var days = ArrayList<String>()
 
-                Navigation.findNavController(requireView()).navigate(R.id.navigation_home,bundle)
-
-                //HomeFragment().carrito.agregar(Recordatorio(days, time, name))
-
+            if(chMonday.isChecked){
+                days.add("Monday")
             }
-        }
-
-        ch1.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                listdays.add("Mon")
-            } else {
-                listdays.remove("Mon")
+            if(chTuesday.isChecked){
+                days.add("Tuesday")
             }
-        }
-
-        ch2.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                listdays.add("Thu")
-            } else {
-                listdays.remove("Thu")
+            if(chWednesday.isChecked){
+                days.add("Wednesday")
             }
-        }
-
-        ch3.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                listdays.add("Wed")
-            } else {
-                listdays.remove("Wed")
+            if(chThursday.isChecked){
+                days.add("Thursday")
             }
-        }
-
-        ch4.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                listdays.add("Thu")
-            } else {
-                listdays.remove("Thu")
+            if(chFriday.isChecked){
+                days.add("Friday")
             }
-        }
-
-        ch5.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                listdays.add("Fri")
-            } else {
-                listdays.remove("Fri")
+            if(chSaturday.isChecked){
+                days.add("Saturday")
             }
-        }
-
-        ch6.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                listdays.add("Sat")
-            } else {
-                listdays.remove("Sat")
+            if(chSunday.isChecked){
+                days.add("Sunday")
             }
-        }
 
-        ch7.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                listdays.add("Sun")
-            } else {
-                listdays.remove("Sun")
-            }
+            var task = Task(title,days,time)
+
+            HomeFragment.task.add(task)
+
+            Toast.makeText(root.context,"New task added",Toast.LENGTH_SHORT).show()
+
         }
 
         return root

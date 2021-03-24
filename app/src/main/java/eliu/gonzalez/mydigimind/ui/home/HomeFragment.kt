@@ -1,25 +1,25 @@
 package eliu.gonzalez.mydigimind.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.GridView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import eliu.gonzalez.mydigimind.AdapterRecordatorio
-import eliu.gonzalez.mydigimind.Carrito
 import eliu.gonzalez.mydigimind.R
-import eliu.gonzalez.mydigimind.Recordatorio
-import eliu.gonzalez.mydigimind.ui.dashboard.DashboardFragment
-import kotlinx.android.synthetic.main.fragment_home.view.*
+import eliu.gonzalez.mydigimind.ui.AdapterTask
+import eliu.gonzalez.mydigimind.ui.Task
 
 class HomeFragment : Fragment() {
-    var carrito: Carrito=Carrito()
+
+    private var adapter: AdapterTask? = null
     private lateinit var homeViewModel: HomeViewModel
+
+    companion object{
+        var task = ArrayList<Task>()
+        var first = false
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -30,15 +30,30 @@ class HomeFragment : Fragment() {
                 ViewModelProvider(this).get(HomeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
 
-        var bundle: Bundle? = arguments
-
-        if(bundle!=null){
-            carrito = bundle?.getSerializable("list") as Carrito
-            Toast.makeText(this.context,carrito.toString(),Toast.LENGTH_SHORT).show()
+        if(first==false){
+            fillTasks()
+            first=true
         }
-        var adapter: AdapterRecordatorio= AdapterRecordatorio(root.context,carrito)
-        root.lista.adapter= adapter
+
+
+        adapter = AdapterTask(root.context,task)
+
+        val gridview: GridView = root.findViewById(R.id.gridview)
+
+        gridview.adapter = adapter
+
 
         return root
+    }
+
+    fun fillTasks(){
+        task.add(Task("Practice 1", arrayListOf("Tuesday"),"17:30"))
+        task.add(Task("Practice 2", arrayListOf("Monday","Sunday"),"17:40"))
+        task.add(Task("Practice 3", arrayListOf("Wednesday"),"14:00"))
+        task.add(Task("Practice 4", arrayListOf("Saturday"),"11:00"))
+        task.add(Task("Practice 5", arrayListOf("Friday"),"13:00"))
+        task.add(Task("Practice 6", arrayListOf("Thursday"),"10:40"))
+        task.add(Task("Practice 7", arrayListOf("Monday"),"12:00"))
+
     }
 }

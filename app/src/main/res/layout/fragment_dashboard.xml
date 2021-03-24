@@ -149,12 +149,15 @@
         android:textColor="@color/colorAccent"
         android:textSize="20sp" />
 
-    <EditText
-        android:id="@+id/textTime"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/btnTime"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:background="?android:attr/selectableItemBackground"
+        android:textColor="@color/Gray"
         android:hint="@string/at_what_time"
-        android:inputType="text" />
+         />
 
     <Button
         android:id="@+id/btnSetTime"
