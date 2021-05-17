@@ -2,12 +2,14 @@ package eliu.gonzalez.mydigimind.ui.dashboard
 
 import android.app.TimePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.firestore.FirebaseFirestore
 import eliu.gonzalez.mydigimind.R
 import eliu.gonzalez.mydigimind.ui.Task
 import eliu.gonzalez.mydigimind.ui.home.HomeFragment
@@ -19,7 +21,7 @@ import kotlin.collections.ArrayList
 class DashboardFragment : Fragment() {
 
     private lateinit var dashboardViewModel: DashboardViewModel
-
+    private lateinit var db: FirebaseFirestore
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -90,8 +92,11 @@ class DashboardFragment : Fragment() {
                 days.add("Sunday")
             }
 
+
+
             var task = Task(title,days,time)
 
+            sendDataFirebase(title,time,days)
             HomeFragment.task.add(task)
 
             Toast.makeText(root.context,"New task added",Toast.LENGTH_SHORT).show()
@@ -99,6 +104,55 @@ class DashboardFragment : Fragment() {
         }
 
         return root
+    }
+
+    private fun sendDataFirebase(title:String,time:String,days: ArrayList<String>){
+        db = FirebaseFirestore.getInstance();
+        var data = hashMapOf(
+            "actividad" to title,
+            "tiempo" to time,
+            "lu" to false,
+            "ma" to false,
+            "mi" to false,
+            "ju" to false,
+            "vi" to false,
+            "sa" to false,
+            "do" to false
+        )
+
+        days.forEach {
+            if(it == "Monday"){
+                data["lu"]=true
+            }
+            if(it == "Tuesday"){
+                data["ma"]=true
+            }
+            if(it == "Wednesday"){
+                data["mi"]=true
+            }
+            if(it == "Thursday"){
+                data["ju"]=true
+            }
+            if(it == "Friday"){
+                data["vi"]=true
+            }
+            if(it == "Saturday"){
+                data["sa"]=true
+            }
+            if(it == "Sunday"){
+                data["do"]=true
+            }
+        }
+
+        db.collection("actividades")
+            .add(data)
+            .addOnSuccessListener { documentReference ->
+                Log.d( "${documentReference.id}","Actividad Agregado!")
+            }
+            .addOnFailureListener { e ->
+                Log.w( "Error adding document", e)
+            }
+
     }
 
 }

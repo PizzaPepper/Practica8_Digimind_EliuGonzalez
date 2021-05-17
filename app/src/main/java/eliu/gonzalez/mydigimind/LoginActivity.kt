@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -66,9 +67,8 @@ class LoginActivity : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     //Log.d(TAG, "signInWithEmail:success")
                     val user = auth.currentUser
-                    //updateUI(user)
-                    val intent: Intent = Intent(this,MainActivity::class.java)
-                    startActivity(intent)
+                    updateUI(user)
+
                 } else {
                     // If sign in fails, display a message to the user.
                     //Log.w(TAG, "signInWithEmail:failure", task.exception)
@@ -78,4 +78,15 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
     }
+
+    private fun updateUI(user: FirebaseUser){
+        if(user != null){
+            val intent: Intent = Intent(this,MainActivity::class.java)
+            //intent.putExtra("info-user",user.)
+            startActivity(intent)
+        }
+
+    }
+
+
 }
